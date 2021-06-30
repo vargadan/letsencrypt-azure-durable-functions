@@ -14,9 +14,31 @@
 if ($env:MSI_SECRET) {
     Disable-AzContextAutosave -Scope Process | Out-Null
     Connect-AzAccount -Identity
+    Write-Host "AZ login successful"
 }
 
 # Uncomment the next line to enable legacy AzureRm alias in Azure PowerShell.
 # Enable-AzureRmAlias
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
+
+try {
+    Import-Module Az.KeyVault
+} catch {
+    Write-Host "An error occurred:"
+    Write-Host $_
+
+}
+try {
+    Import-Module Posh-ACME
+} catch {
+    Write-Host "An error occurred:"
+    Write-Host $_
+}
+
+try {
+    Import-Module $PSScriptRoot/Module/CertAutomation.psm1 -Force
+} catch {
+    Write-Host "An error occurred:"
+    Write-Host $_
+}

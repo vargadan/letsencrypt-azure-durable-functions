@@ -1,0 +1,9 @@
+{
+  "bindings": [
+    {
+      "name": "RequestPropertiesJson",
+      "type": "activityTrigger",
+      "direction": "in"
+    }
+  ]
+}
