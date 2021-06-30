@@ -44,7 +44,6 @@ function Get-CertFromStorage {
   $TemplFolder = $env:TEMP 
   Write-Host "Container: $ContainerName ; Blob: $CertName ; Context: $StorageContext"
   $CertBlob = Get-AzStorageBlob -Container $ContainerName -Blob $CertName -Context $StorageContext 
-  Write-Host "Blob found for $CertName"
   $ReturnVal = $null
   if ($CertBlob) {
     $CertPath = "$TemplFolder/$CertName.pfx"
