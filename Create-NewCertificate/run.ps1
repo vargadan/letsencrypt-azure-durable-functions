@@ -82,10 +82,9 @@ if ($CertData) {
         WildCard='TRUE'
     }
     $Certpw = $Password | ConvertTo-SecureString -AsPlainText -Force
-    Write-Host "CertName         : $CertName"
-    Write-Host "CertPath         : $CertPath"
+    Write-Host "Uploading certificate $CertName to key-vault $VaultName from $CertPath"
     Import-AzKeyVaultCertificate -VaultName $VaultName -Name $CertName -FilePath $CertPath -Password $Certpw -Tag $CertTags
-    Write-Host "Certificate uploaded"
+    Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
     Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
