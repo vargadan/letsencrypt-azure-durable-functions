@@ -8,7 +8,7 @@ Write-Host "IsProd : $IsProd"
 
 $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
-$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProd }
+$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdValue }
 
 $ParallelTasks = foreach ($Domain in $Domains) {
     $RequestProperties = @{ DomainName = $Domain.Name; IsProd = $IsProd }

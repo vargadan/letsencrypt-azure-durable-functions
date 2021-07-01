@@ -2,7 +2,7 @@ param($Parameters)
 
 Write-Host $Parameters
 
-$IsProd = $Parameters.IsProd
+$IsProd = $Parameters.IsProd -eq "True"
 
 Write-Debug "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
 
