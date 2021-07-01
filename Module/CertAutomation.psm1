@@ -17,8 +17,9 @@ function Get-IfCertIsToExpire {
   )
   $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
   $Cert = Get-AzKeyVaultCertificate -VaultName $VaultName -Name $CertName 
+  Write-Host $Cert
   if (!$Cert -or !$Cert.Enabled) {
-    return $True
+    $True
   } else {
     return $Cert.Expires -lt (Get-Date).AddDays($Days)
   }
