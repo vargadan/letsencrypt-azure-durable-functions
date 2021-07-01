@@ -1,30 +1,28 @@
 param($Context)
 
-$ErrorActionPreference = "Stop"
 # Write-Host (Get-Member -InputObject $Context.Input.IsProd )
 $IsProdValue = $Context.Input.IsProd.ToString()
 Write-Host "Context.Input.IsProd : $IsProdValue"
 $IsProd = $IsProdValue -eq "True"
 Write-Host "IsProd : $IsProd"
 
-$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input ("" + $IsProd)
-$DomainsDone = @()
-
+$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProd }
+$DomainJobs = @{}
+$DomainJobs.Add("IsProd", $IsProd)
 
 $ParallelTasks = foreach ($Domain in $Domains) {
-    $RequestProperties = @{
-        DomainName = $Domain.Name
-        IsProd = $IsProd
-    }
-    $RequestPropertiesJson = (ConvertTo-Json $RequestProperties)
-    Write-Host "RequestPropertiesJson : $RequestPropertiesJson"
-    $DomainsDone += $Domain.Name
-    Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -Input ("JSON:" + $RequestPropertiesJson) -NoWait
+    $RequestProperties = @{ DomainName = $Domain.Name; IsProd = $IsProd }
+    # $RequestPropertiesJson = (ConvertTo-Json $RequestProperties)
+    Write-Host $RequestPropertiesJson 
+    $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -Input $RequestProperties -NoWait
+    $DomainJobs.Add($Domain.Name, $JobStatus)
 }
 
-$Outputs = Wait-ActivityFunction -Task $ParallelTasks
+$ExecutionOutputs = Wait-ActivityFunction -Task $ParallelTasks
 
-Write-Host "Outputs : "
-Write-Host $Outputs
+Write-Host "Execution Outputs : "
+Write-Host $ExecutionOutputs
+Write-Host "DomainsJobs : "
+Write-Host $DomainsJobs
 
-$DomainsDone
+$DomainsJobs

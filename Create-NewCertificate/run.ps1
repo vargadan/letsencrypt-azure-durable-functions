@@ -1,15 +1,9 @@
-param($RequestPropertiesJson)
+param($RequestProperties)
 
 $ErrorActionPreference = "Stop"
 
-if ($RequestPropertiesJson.StartsWith("JSON:")) {
-  # just a hack to overcome shabby and automatic parameter de-/serialization
-  $RequestPropertiesJson = $RequestPropertiesJson.SubString("JSON:".Length)
-}
-
-Write-Host "RequestPropertiesJson : $RequestPropertiesJson"
-$RequestProperties = (ConvertFrom-Json $RequestPropertiesJson)
-Write-Host "RequestProperties : $RequestProperties"
+Write-Host "RequestProperties :"
+Write-Host $RequestProperties
 
 $DomainName = $RequestProperties.DomainName
 $IsProd = $RequestProperties.IsProd -eq "True"
