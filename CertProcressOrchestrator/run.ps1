@@ -6,8 +6,8 @@ Write-Host "Context.Input.IsProd : $IsProdValue"
 $IsProd = $IsProdValue -eq "True"
 Write-Host "IsProd : $IsProd"
 
-$Contact = $env:CONTACT_EMAIL
-$VaultName = $env:VAULT_NAME
+$Contact = $Context.Input.Contact.ToString()
+$VaultName = $Context.Input.VaultName.ToString()
 
 $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)

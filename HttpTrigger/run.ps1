@@ -3,8 +3,11 @@ using namespace System.Net
 param($Request, $TriggerMetadata)
 
 $ErrorActionPreference = "Stop"
+
 $OrchestratorInput = @{
   IsProd = $Request.Params.Stage -eq "Prod"
+  Contact = $env:CONTACT_EMAIL
+  VaultName = $env:VAULT_NAME
 }
 
 $InstanceId = Start-NewOrchestration -Input $OrchestratorInput -FunctionName 'CertProcressOrchestrator' 
