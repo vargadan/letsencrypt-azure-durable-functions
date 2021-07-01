@@ -7,9 +7,9 @@ Write-Host $Parameters
 
 $DomainName = $Parameters.DomainName
 $IsProd = $Parameters.IsProd -eq "True"
-$Contact = $env:CONTACT_EMAIL
+$Contact = $Parameters.Contact
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
-$VaultName = $env:VAULT_NAME
+$VaultName = $Parameters.VaultName
 $DomainNames=$DomainName, "*.$DomainName"
 
 $StorageContext = New-AzStorageContext -ConnectionString $env:WEBSITE_CONTENTAZUREFILECONNECTIONSTRING

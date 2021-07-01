@@ -6,12 +6,15 @@ Write-Host "Context.Input.IsProd : $IsProdValue"
 $IsProd = $IsProdValue -eq "True"
 Write-Host "IsProd : $IsProd"
 
+$Contact = $env:CONTACT_EMAIL
+$VaultName = $env:VAULT_NAME
+
 $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
-$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdValue }
+$Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdValue; VaultName = $VaultName }
 
 $ParallelTasks = foreach ($Domain in $Domains) {
-    $RequestProperties = @{ DomainName = $Domain.Name; IsProd = $IsProd }
+    $RequestProperties = @{ DomainName = $Domain.Name; IsProd = $IsProd; VaultName = $VaultName; Contact = $Contact }
     # $RequestPropertiesJson = (ConvertTo-Json $RequestProperties)
     Write-Host $RequestPropertiesJson 
     $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -Input $RequestProperties -NoWait
