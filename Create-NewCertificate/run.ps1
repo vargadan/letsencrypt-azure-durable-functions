@@ -60,7 +60,7 @@ if ($SavedCertData) {
         $DirectoryUrl = 'LE_STAGE'
     }
     Write-Host "DirectoryUrl     : $DirectoryUrl"
-    $LEResult = New-PACertificate $DomainNames -Contact $Contact -DnsPlugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
+    $LEResult = New-PACertificate $DomainNames -AlwaysNewKey -Contact $Contact -DnsPlugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
     Write-Host "Certificate generated : $LEResult"
     Get-Member -InputObject $LEResult
     $CertData = @{
