@@ -21,7 +21,7 @@ The orchestrated process is the following:
 - _WEBSITE_CONTENTAZUREFILECONNECTIONSTRING_: this env var is automatically created and holds a connection string to the storage account associated with the durable function project; it is also read by the application because the temporary storage blob container (called "temp-storage") needs to be created in this storage account.
 - FUNCTIONS_WORKER_PROCESS_COUNT and PSWorkerInProcConcurrencyUpperBound set to values greated than 1 (e.g. 4) to allow for parallel execution of activity functions
 ### Access Control
-- Either a system or user assigned __managed identity__ needs to be created with the below roles
-   - __DNS Zone Contributor__ for the subscription or the resource groups holding the DNS zones 
-   - __Certificate List, Get and Import__ permission in the key vault (as set by the env var VAULT_NAME)
+- Either a system or user assigned __managed identity__ needs to be assigned with the function application and it needs to have the below roles
+   - __DNS Zone Contributor__ for the subscription or the resource groups holding the DNS zones, so that it can query domain names and place challenges into dns records
+   - __Certificate List, Get and Import__ permission in the key vault (as set by the env var VAULT_NAME), so tha it can query certificates that are about to expire and import the new certificate into the key-vault
 
