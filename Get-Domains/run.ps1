@@ -1,8 +1,11 @@
 param($Parameters)
 
+$ErrorActionPreference = "Stop"
+
 Write-Host $Parameters
 
 $IsProd = $Parameters.IsProd -eq "True"
+$VaultName = Parameters.VaultName
 
 Write-Host "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
 
