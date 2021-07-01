@@ -11,17 +11,20 @@ function Get-CertName {
 }
 function Get-IfCertIsToExpire {
   Param (
+    [Parameter(Mandatory = $true)][string] $VaultName,
     [Parameter(Mandatory = $true)][string] $DomainName,
     [Parameter(Mandatory = $true)][int] $Days,
     [Parameter(Mandatory = $true)][boolean] $IsProd
   )
   $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
   $Cert = Get-AzKeyVaultCertificate -VaultName $VaultName -Name $CertName 
-  Write-Host $Cert
   if (!$Cert -or !$Cert.Enabled) {
+    Write-Host "$DomainName : no enabled cert found."
     $True
   } else {
-    return $Cert.Expires -lt (Get-Date).AddDays($Days)
+    $Expires = $Cert.Expires
+    Write-Host "$DomainName : cert found; will expire at $Expires"
+    return $Expires -lt (Get-Date).AddDays($Days)
   }
 }
 
@@ -32,7 +35,7 @@ function Get-DueDomains {
   ) 
   $Domains = Get-AzDnsZone `
     | Where-Object { $_.Tags.ContainsKey("letsencrypt") } `
-    | Where-Object { (Get-IfCertIsToExpire -DomainName $_ -Days 20 -IsProd $IsProd) }
+    | Where-Object { (Get-IfCertIsToExpire -DomainName $_.Name -Days 20 -IsProd $IsProd -VaultName $VaultName) }
   $Domains
 }
 
