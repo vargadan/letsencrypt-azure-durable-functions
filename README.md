@@ -15,13 +15,13 @@ The orchestrated process is the following:
 
 ## Configuration:
 ### Necessary Env Vars
-- VAULT_NAME: the name of the vault where certificates are saved
-- CONTACT_EMAIL: email of cert contact to where letsencrypt sends notifications (i.e. expiry)
-- TIMER_TRIGGER_START_URL: The URL that the timer trigger should invoke
-- WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: this env var is automatically created and holds a connection string to the storage account associated with the durable function project; it is also read by the application because the temporary storage blob container (called "temp-storage") needs to be created in this storage account.
+- _VAULT_NAME_: the name of the vault where certificates are saved
+- _CONTACT_EMAIL_: email of cert contact to where letsencrypt sends notifications (i.e. expiry)
+- _TIMER_TRIGGER_START_URL_: The URL that the timer trigger should invoke
+- _WEBSITE_CONTENTAZUREFILECONNECTIONSTRING_: this env var is automatically created and holds a connection string to the storage account associated with the durable function project; it is also read by the application because the temporary storage blob container (called "temp-storage") needs to be created in this storage account.
 - FUNCTIONS_WORKER_PROCESS_COUNT and PSWorkerInProcConcurrencyUpperBound set to values greated than 1 (e.g. 4) to allow for parallel execution of activity functions
 ### Access Control
-- Either a system assigned or a user managed system identity needs to be created with the below roles
-   - DNS Zone Contribur for the subscription or the resource groups holding the DNS zones 
-   - Certificate Import permission in the key vault (as set by the env var VAULT_NAME)
+- Either a system or user assigned __managed identity__ needs to be created with the below roles
+   - __DNS Zone Contributor__ for the subscription or the resource groups holding the DNS zones 
+   - __Certificate List, Get and Import__ permission in the key vault (as set by the env var VAULT_NAME)
 
