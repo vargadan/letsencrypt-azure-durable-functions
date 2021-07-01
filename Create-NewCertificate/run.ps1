@@ -1,12 +1,12 @@
-param($RequestProperties)
+param($Parameters)
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "RequestProperties :"
-Write-Host $RequestProperties
+Write-Host "Parameters :"
+Write-Host $Parameters
 
-$DomainName = $RequestProperties.DomainName
-$IsProd = $RequestProperties.IsProd -eq "True"
+$DomainName = $Parameters.DomainName
+$IsProd = $Parameters.IsProd -eq "True"
 $Contact = $env:CONTACT_EMAIL
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
 $VaultName = $env:VAULT_NAME

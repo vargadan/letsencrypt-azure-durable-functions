@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "name": "RequestPropertiesJson",
+      "name": "Parameters",
       "type": "activityTrigger",
       "direction": "in"
     }

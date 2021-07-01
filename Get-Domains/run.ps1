@@ -1,6 +1,6 @@
-param($Params)
+param($Parameters)
 
-$IsProd = $Params.IsProd -eq "True" -or $Params.IsProd -eq $True
+$IsProd = $Parameters.IsProd
 
 Write-Debug "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
 

@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "name": "IsProd",
+      "name": "Parameters",
       "type": "activityTrigger",
       "direction": "in"
     }
