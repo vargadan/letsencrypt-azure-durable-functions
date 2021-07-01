@@ -1,4 +1,4 @@
-# LetsEncrypt certifiacete autiomaiton with Azure Durable Functions and Azure Key-Vault
+# LetsEncrypt certificate automation with Azure Durable Functions and Azure Key-Vault
 
 LetsEncrypt certification request automation for Azure DNS and KeyVault with Azure Durable Functions
 The orchestrated process is the following:
