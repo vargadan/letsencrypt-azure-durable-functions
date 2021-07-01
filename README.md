@@ -1,4 +1,5 @@
-# letsencrypt-azure-durable-functions
+# LetsEncrypt certifiacete autiomaiton with Azure Durable Functions and Azure Key-Vault
+
 LetsEncrypt certification request automation for Azure DNS and KeyVault with Azure Durable Functions
 The orchestrated process is the following:
 1. Get-Domians activity funtion: Query Azure DNS for domains that have a "letsencrypt" tag and also query their associated certificates from the key-vault; filter those whose certificate is about to expire or does not exist yet
