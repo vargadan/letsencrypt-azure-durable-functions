@@ -9,14 +9,16 @@ Write-Host "IsProd : $IsProd"
 $Contact = $Context.Input.Contact.ToString()
 $VaultName = $Context.Input.VaultName.ToString()
 
+Write-Host "Contact: $Contact"
+Write-Host "VaultName: $VaultName"
+
 $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
 $Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdString; VaultName = $VaultName }
 
 $ParallelTasks = foreach ($Domain in $Domains) {
-    $RequestProperties = @{ DomainName = $Domain.Name; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact }
-    Write-Host $RequestProperties
-    $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -Input $RequestProperties -NoWait
+    $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -NoWait `
+        -Input @{ DomainName = $Domain.Name; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact }
     $DomainJobs.Add($Domain.Name, $JobStatus)
 }
 
