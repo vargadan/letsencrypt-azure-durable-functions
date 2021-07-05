@@ -7,9 +7,11 @@ Write-Host $Parameters
 
 $DomainName = $Parameters.DomainName
 $IsProd = $Parameters.IsProd -eq "True"
+$RetainTemp = $Parameters.RetainTemp -eq "True"
 $Contact = $Parameters.Contact
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
 $VaultName = $Parameters.VaultName
+
 $DomainNames=$DomainName, "*.$DomainName"
 
 $StorageContext = New-AzStorageContext -ConnectionString $env:WEBSITE_CONTENTAZUREFILECONNECTIONSTRING
@@ -81,7 +83,9 @@ if ($CertData) {
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
-    Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    if (!RetainTemp) {
+        Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    }
     $CertName 
 } else {
     Write-Host "Neither saved nor new certificate found!"

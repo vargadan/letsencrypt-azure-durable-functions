@@ -5,6 +5,7 @@ $IsProdString = $Context.Input.IsProd.ToString()
 Write-Host "Context.Input.IsProd : $IsProdString"
 $IsProd = $IsProdString -eq "True"
 Write-Host "IsProd : $IsProd"
+$RetainTempCert = $Context.Input.RetainTempCert.ToString()
 
 $Contact = $Context.Input.Contact.ToString()
 $VaultName = $Context.Input.VaultName.ToString()
@@ -18,7 +19,7 @@ $Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd =
 
 $ParallelTasks = foreach ($Domain in $Domains) {
     $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -NoWait `
-        -Input @{ DomainName = $Domain.Name; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact }
+        -Input @{ DomainName = $Domain.Name; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact; RetainTemp = $RetainTempCert }
     $DomainJobs.Add($Domain.Name, $JobStatus)
 }
 
