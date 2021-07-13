@@ -83,7 +83,7 @@ if ($CertData) {
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
-    if (!RetainTemp) {
+    if (!$RetainTemp) {
         Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
     }
     $CertName 
