@@ -1,21 +1,17 @@
-param($RequestPropertiesJson)
+param($Parameters)
 
 $ErrorActionPreference = "Stop"
 
-if ($RequestPropertiesJson.StartsWith("JSON:")) {
-  # just a hack to overcome shabby and automatic parameter de-/serialization
-  $RequestPropertiesJson = $RequestPropertiesJson.SubString("JSON:".Length)
-}
+Write-Host "Parameters :"
+Write-Host $Parameters
 
-Write-Host "RequestPropertiesJson : $RequestPropertiesJson"
-$RequestProperties = (ConvertFrom-Json $RequestPropertiesJson)
-Write-Host "RequestProperties : $RequestProperties"
-
-$DomainName = $RequestProperties.DomainName
-$IsProd = $RequestProperties.IsProd -eq "True"
-$Contact = $env:CONTACT_EMAIL
+$DomainName = $Parameters.DomainName
+$IsProd = $Parameters.IsProd -eq "True"
+$RetainTemp = $Parameters.RetainTemp -eq "True"
+$Contact = $Parameters.Contact
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
-$VaultName = $env:VAULT_NAME
+$VaultName = $Parameters.VaultName
+
 $DomainNames=$DomainName, "*.$DomainName"
 
 $StorageContext = New-AzStorageContext -ConnectionString $env:WEBSITE_CONTENTAZUREFILECONNECTIONSTRING
@@ -87,7 +83,9 @@ if ($CertData) {
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
-    Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    if (!$RetainTemp) {
+        Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    }
     $CertName 
 } else {
     Write-Host "Neither saved nor new certificate found!"

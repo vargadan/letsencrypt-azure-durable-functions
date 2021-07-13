@@ -1,10 +1,13 @@
-param($IsProd)
+param($Parameters)
 
-$VaultName = $env:VAULT_NAME
+$ErrorActionPreference = "Stop"
 
-$IsProd = $IsProd -eq "True"
+Write-Host $Parameters
 
-Write-Debug "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
+$IsProd = $Parameters.IsProd -eq "True"
+$VaultName = $Parameters.VaultName
+
+Write-Host "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
 
 $Domains = Get-DueDomains -VaultName $VaultName -IsProd $IsProd
 
