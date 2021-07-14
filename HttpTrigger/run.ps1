@@ -4,11 +4,16 @@ param($Request, $TriggerMetadata)
 
 $ErrorActionPreference = "Stop"
 
+$SaveInKeyVault = $True
+if ($Request.Query.SaveInKeyVault -eq "False") {
+  $SaveInKeyVault = $False
+}
+
 $OrchestratorInput = @{
   IsProd = $Request.Params.Stage -eq "Prod"
   Contact = $env:CONTACT_EMAIL
   VaultName = $env:VAULT_NAME
-  RetainTempCert = $Request.Query.RetainTempCert
+  SaveInKeyVault = $SaveInKeyVault.ToString()
 }
 
 $InstanceId = Start-NewOrchestration -Input $OrchestratorInput -FunctionName 'CertProcressOrchestrator' 

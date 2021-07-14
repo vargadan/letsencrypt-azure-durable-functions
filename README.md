@@ -1,4 +1,5 @@
-# letsencrypt-azure-durable-functions
+# LetsEncrypt certificate automation with Azure Durable Functions and Azure Key-Vault
+
 LetsEncrypt certification request automation for Azure DNS and KeyVault with Azure Durable Functions
 The orchestrated process is the following:
 1. Get-Domians activity funtion: Query Azure DNS for domains that have a "letsencrypt" tag and also query their associated certificates from the key-vault; filter those whose certificate is about to expire or does not exist yet
@@ -15,13 +16,13 @@ The orchestrated process is the following:
 
 ## Configuration:
 ### Necessary Env Vars
-- VAULT_NAME: the name of the vault where certificates are saved
-- CONTACT_EMAIL: email of cert contact to where letsencrypt sends notifications (i.e. expiry)
-- TIMER_TRIGGER_START_URL: The URL that the timer trigger should invoke
-- WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: this env var is automatically created and holds a connection string to the storage account associated with the durable function project; it is also read by the application because the temporary storage blob container (called "temp-storage") needs to be created in this storage account.
+- _VAULT_NAME_: the name of the vault where certificates are saved
+- _CONTACT_EMAIL_: email of cert contact to where letsencrypt sends notifications (i.e. expiry)
+- _TIMER_TRIGGER_START_URL_: The URL that the timer trigger should invoke
+- _WEBSITE_CONTENTAZUREFILECONNECTIONSTRING_: this env var is automatically created and holds a connection string to the storage account associated with the durable function project; it is also read by the application because the temporary storage blob container (called "temp-storage") needs to be created in this storage account.
 - FUNCTIONS_WORKER_PROCESS_COUNT and PSWorkerInProcConcurrencyUpperBound set to values greated than 1 (e.g. 4) to allow for parallel execution of activity functions
 ### Access Control
-- Either a system assigned or a user managed system identity needs to be created with the below roles
-   - DNS Zone Contribur for the subscription or the resource groups holding the DNS zones 
-   - Certificate Import permission in the key vault (as set by the env var VAULT_NAME)
+- Either a system or user assigned __managed identity__ needs to be assigned with the function application and it needs to have the below roles
+   - __DNS Zone Contributor__ for the subscription or the resource groups holding the DNS zones, so that it can query domain names and place challenges into dns records
+   - __Certificate List, Get and Import__ permission in the key vault (as set by the env var VAULT_NAME), so tha it can query certificates that are about to expire and import the new certificate into the key-vault
 
