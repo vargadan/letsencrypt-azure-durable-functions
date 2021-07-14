@@ -7,7 +7,7 @@ Write-Host $Parameters
 
 $DomainName = $Parameters.DomainName
 $IsProd = $Parameters.IsProd -eq "True"
-$RetainTemp = $Parameters.RetainTemp -eq "True"
+$SaveInKeyVault = $Parameters.SaveInKeyVault -eq "True"
 $Contact = $Parameters.Contact
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
 $VaultName = $Parameters.VaultName
@@ -68,7 +68,10 @@ if ($SavedCertData) {
     Save-CertToStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -Password $Password -CertPath $CertPath
 }
 
-if ($CertData) {
+if (!$CertData) {
+    Write-Host "$CertName : Neither saved nor new certificate found!"
+    $null
+} elseif ($SaveInKeyVault) {
     Write-Host "Saving Certificate in Key-Vault : $VaultName"
     $CertPath = $CertData.CertPath
     $Password = $CertData.Password
@@ -83,11 +86,9 @@ if ($CertData) {
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
-    if (!$RetainTemp) {
-        Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
-    }
+    Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
     $CertName 
 } else {
-    Write-Host "Neither saved nor new certificate found!"
-    $null
+    Write-Host "$CertName : Not saved in keyvault, certificate file left in temporary storage!"
+    $CertName 
 }
