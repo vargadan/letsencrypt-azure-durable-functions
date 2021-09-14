@@ -69,7 +69,7 @@ if ($SavedCertData) {
     Set-AzStorageBlobContent -File $LEResult.PfxFile -Container $BlobContainerName -Blob "$CertName.pfx" -Metadata @{ "Password" = $Password; "DomainName" =  $DomainName } -Context $StorageContext -Force
     Set-AzStorageBlobContent -File $LEResult.FullChainFile -Container $BlobContainerName -Blob "$CertName-fullchain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
     Set-AzStorageBlobContent -File $LEResult.ChainFile -Container $BlobContainerName -Blob "$CertName-chain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.CertFile -Container $BlobContainerName -Blob "$CertName.cer" -Metad.cerata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
+    Set-AzStorageBlobContent -File $LEResult.CertFile -Container $BlobContainerName -Blob "$CertName.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
     Set-AzStorageBlobContent -File $LEResult.KeyFile -Container $BlobContainerName -Blob "$CertName.key" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
 }
 
