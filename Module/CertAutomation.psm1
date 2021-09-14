@@ -32,7 +32,7 @@ function Get-DueDomains {
   Param (
     [Parameter(Mandatory = $true)][string] $VaultName,
     [Parameter(Mandatory = $true)][boolean] $IsProd,
-    [Parameter][int] $DaysToExpiry = 20
+    [Parameter(Mandatory = $true)][int] $DaysToExpiry
   ) 
   $Domains = Get-AzDnsZone `
     | Where-Object { $_.Tags.ContainsKey("letsencrypt") } `
