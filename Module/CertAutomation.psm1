@@ -31,11 +31,12 @@ function Get-IfCertIsToExpire {
 function Get-DueDomains {
   Param (
     [Parameter(Mandatory = $true)][string] $VaultName,
-    [Parameter(Mandatory = $true)][boolean] $IsProd
+    [Parameter(Mandatory = $true)][boolean] $IsProd,
+    [Parameter][int] $DaysToExpiry = 20
   ) 
   $Domains = Get-AzDnsZone `
     | Where-Object { $_.Tags.ContainsKey("letsencrypt") } `
-    | Where-Object { (Get-IfCertIsToExpire -DomainName $_.Name -Days 20 -IsProd $IsProd -VaultName $VaultName) }
+    | Where-Object { (Get-IfCertIsToExpire -DomainName $_.Name -Days $DaysToExpiry -IsProd $IsProd -VaultName $VaultName) }
   $Domains
 }
 
