@@ -16,6 +16,6 @@ if (!$IsProd) {
 
 $Domains = Get-DueDomains -VaultName $VaultName -IsProd $IsProd -DaysToExpiry $DaysToExpiry
 
-$Domains | ForEach-Object { Write-Host $_.Name }
+$Domains | ForEach-Object { Write-Host "Returning " + $_.Name }
 
 $Domains
