@@ -19,7 +19,7 @@ $BlobContainerName =  "temp-storage"
 
 $SavedCertData = $null
 try {
-    $SavedCertData = Get-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    $SavedCertData = Get-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName "$CertName-fullchain.pfx" -ErrorAction "Ignore"
 } catch {
     Write-Host "Error Downloading Certificate :  $_"
 }
@@ -91,7 +91,7 @@ if (!$CertData) {
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"
-    Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
+    # Remove-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName $CertName -ErrorAction "Ignore"
     $CertName 
 } else {
     Write-Host "$CertName : Not saved in keyvault, certificate file left in temporary storage!"

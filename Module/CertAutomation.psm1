@@ -46,12 +46,12 @@ function Get-CertFromStorage {
     [Parameter(Mandatory = $true)][string] $ContainerName,
     [Parameter(Mandatory = $true)][string] $CertName
   )
-  $TemplFolder = $env:TEMP 
+  $TemplFolder = $env:TEMP
   Write-Host "Container: $ContainerName ; Blob: $CertName ; Context: $StorageContext"
   $CertBlob = Get-AzStorageBlob -Container $ContainerName -Blob $CertName -Context $StorageContext 
   $ReturnVal = $null
   if ($CertBlob) {
-    $CertPath = "$TemplFolder/$CertName.pfx"
+    $CertPath = "$TemplFolder/$CertName"
     $CertBlob | Get-AzStorageBlobContent -Destination $CertPath
     Write-Host "Blob downloaded to $CertPath"
     $ReturnVal = @{
@@ -62,34 +62,34 @@ function Get-CertFromStorage {
   $ReturnVal
 }
   
-function Save-CertToStorage  {
-  param (
-    [Parameter(Mandatory = $true)][object] $StorageContext,
-    [Parameter(Mandatory = $true)][string] $ContainerName,
-    [Parameter(Mandatory = $true)][string] $Password,
-    [Parameter(Mandatory = $true)][string] $CertPath,
-    [Parameter(Mandatory = $true)][string] $CertName
-  )
-  $Metadata = @{
-    "Password" = $Password
-  }
-  Set-AzStorageBlobContent -File $CertPath `
-    -Container $ContainerName `
-    -Blob $CertName `
-    -Metadata $Metadata `
-    -Context $StorageContext `
-    -Force
-}
+# function Save-CertToStorage  {
+#   param (
+#     [Parameter(Mandatory = $true)][object] $StorageContext,
+#     [Parameter(Mandatory = $true)][string] $ContainerName,
+#     [Parameter(Mandatory = $true)][string] $Password,
+#     [Parameter(Mandatory = $true)][string] $CertPath,
+#     [Parameter(Mandatory = $true)][string] $CertName
+#   )
+#   $Metadata = @{
+#     "Password" = $Password
+#   }
+#   Set-AzStorageBlobContent -File $CertPath `
+#     -Container $ContainerName `
+#     -Blob $CertName `
+#     -Metadata $Metadata `
+#     -Context $StorageContext `
+#     -Force
+# }
 
-function Remove-CertFromStorage  {
-  param (
-    [Parameter(Mandatory = $true)][object] $StorageContext,
-    [Parameter(Mandatory = $true)][string] $ContainerName,
-    [Parameter(Mandatory = $true)][string] $CertName
-  )
-  Remove-AzStorageBlob -Container $ContainerName `
-    -Blob $CertName `
-    -Context $StorageContext `
-    -Force
-  Write-Host "Certificate removed from temp storage : $CertName"
-}
+# function Remove-CertFromStorage  {
+#   param (
+#     [Parameter(Mandatory = $true)][object] $StorageContext,
+#     [Parameter(Mandatory = $true)][string] $ContainerName,
+#     [Parameter(Mandatory = $true)][string] $CertName
+#   )
+#   Remove-AzStorageBlob -Container $ContainerName `
+#     -Blob $CertName `
+#     -Context $StorageContext `
+#     -Force
+#   Write-Host "Certificate removed from temp storage : $CertName"
+# }
