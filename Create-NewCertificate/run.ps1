@@ -2,10 +2,10 @@ param($Parameters)
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "Parameters :"
-Write-Host $Parameters
+Write-Host "Parameters : $Parameters"
 
 $DomainName = $Parameters.DomainName
+Write-Host "Parameters : $DomainName"
 $IsProd = $Parameters.IsProd -eq "True"
 $SaveInKeyVault = $Parameters.SaveInKeyVault -eq "True"
 $Contact = $Parameters.Contact

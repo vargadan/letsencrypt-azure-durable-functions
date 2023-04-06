@@ -3,6 +3,9 @@ param($Context)
 # Write-Host (Get-Member -InputObject $Context.Input.IsProd )
 $IsProdString = $Context.Input.IsProd.ToString()
 $InputDomainName = $Context.Input.Domain
+if (!$InputDomainName) {
+    Write-Host "Context.Input.Domain : $InputDomainName"
+}
 Write-Host "Context.Input.IsProd : $IsProdString"
 $IsProd = $IsProdString -eq "True"
 Write-Host "IsProd : $IsProd"
@@ -23,7 +26,8 @@ if (!$InputDomainName) {
 } else {
     $Domains = @(@{"Name" = $InputDomainName})
 }
-Write-Host "Domains : $Domains"
+Write-Host "Domains :"
+Write-Host $Domains
 
 $ParallelTasks = foreach ($Domain in $Domains) {
     $DomainName = $Domain.Name
@@ -36,7 +40,7 @@ $ParallelTasks = foreach ($Domain in $Domains) {
 if ($ParallelTasks)
 {
     $ExecutionOutputs = Wait-ActivityFunction -Task $ParallelTasks
-    Write-Host "Execution Outputs : "
+    Write-Host "Execution Outputs :"
     Write-Host $ExecutionOutputs
 
 }
