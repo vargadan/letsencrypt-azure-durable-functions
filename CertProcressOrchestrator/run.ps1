@@ -3,7 +3,7 @@ param($Context)
 # Write-Host (Get-Member -InputObject $Context.Input.IsProd )
 $IsProdString = $Context.Input.IsProd.ToString()
 $InputDomainName = $Context.Input.Domain
-if (!$InputDomainName) {
+if ($InputDomainName) {
     Write-Host "Context.Input.Domain : $InputDomainName"
 }
 Write-Host "Context.Input.IsProd : $IsProdString"
@@ -21,11 +21,12 @@ $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
 
 $Domains = @()
-if (!$InputDomainName) {
+if ($InputDomainName) {
+    $Domains = @(@{"Name" = $InputDomainName})
+    Write-Host "Domains[0].Name : $($Domains[0].Name)"
+} else {
     Write-Host "Querying Domains"
     $Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdString; VaultName = $VaultName }
-} else {
-    $Domains = @(@{"Name" = $InputDomainName})
 }
 Write-Host "Domains :"
 Write-Host $Domains
