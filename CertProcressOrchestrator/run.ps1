@@ -22,6 +22,7 @@ $DomainJobs.Add("IsProd", $IsProd)
 
 $Domains = @()
 if (!$InputDomainName) {
+    Write-Host "Querying Domains"
     $Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdString; VaultName = $VaultName }
 } else {
     $Domains = @(@{"Name" = $InputDomainName})
