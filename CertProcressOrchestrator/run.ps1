@@ -2,7 +2,7 @@ param($Context)
 
 # Write-Host (Get-Member -InputObject $Context.Input.IsProd )
 $IsProdString = $Context.Input.IsProd.ToString()
-$DomainName = $Context.Input.Domain
+$InputDomainName = $Context.Input.Domain
 Write-Host "Context.Input.IsProd : $IsProdString"
 $IsProd = $IsProdString -eq "True"
 Write-Host "IsProd : $IsProd"
@@ -18,16 +18,17 @@ $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
 
 $Domains = @()
-if (!$DomainName) {
+if (!$InputDomainName) {
     $Domains = Invoke-DurableActivity -FunctionName 'Get-Domains' -Input @{ IsProd = $IsProdString; VaultName = $VaultName }
 } else {
-    $Domains = @(@{"Name" = $DomainName})
+    $Domains = @(@{"Name" = $InputDomainName})
 }
 Write-Host "Domains : $Domains"
 
 $ParallelTasks = foreach ($Domain in $Domains) {
+    $DomainName = $Domain.Name
     $JobStatus = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -NoWait `
-        -Input @{ DomainName = $Domain.Name; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact; SaveInKeyVault = $SaveInKeyVault }
+        -Input @{ DomainName = $DomainName; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact; SaveInKeyVault = $SaveInKeyVault }
     Write-Host "Invoke-DurableActivity Create-NewCertificate for domain : $DomainName, status : $JobStatus"
     $DomainJobs.Add($DomainName, $JobStatus)
 }
