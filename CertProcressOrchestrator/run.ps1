@@ -2,7 +2,7 @@ param($Context)
 
 # Write-Host (Get-Member -InputObject $Context.Input.IsProd )
 $IsProdString = $Context.Input.IsProd.ToString()
-$InputDomainName = $Context.Input.Domain
+$InputDomainName = $Context.Input.Domain.ToString().Trim()
 if ($InputDomainName) {
     Write-Host "Context.Input.Domain : $InputDomainName"
 }
