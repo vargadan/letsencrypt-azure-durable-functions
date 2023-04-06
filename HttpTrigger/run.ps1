@@ -11,6 +11,7 @@ if ($Request.Query.SaveInKeyVault -eq "False") {
 
 $OrchestratorInput = @{
   IsProd = $Request.Params.Stage -eq "Prod"
+  Domain= $Request.Params.Domain
   Contact = $env:CONTACT_EMAIL
   VaultName = $env:VAULT_NAME
   SaveInKeyVault = $SaveInKeyVault.ToString()
