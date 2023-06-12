@@ -9,7 +9,7 @@ $VaultName = $Parameters.VaultName
 
 Write-Host "Get-Domains (VaultName : $VaultName, IsProd : $IsProd)"
 
-$DaysToExpiry = 20
+$DaysToExpiry = 30
 if (!$IsProd) {
   $DaysToExpiry = 100
 }
