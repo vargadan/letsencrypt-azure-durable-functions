@@ -23,22 +23,17 @@ if ($env:MSI_SECRET) {
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
 
 try {
+    Import-Module Az.Accounts
     Import-Module Az.KeyVault
-} catch {
-    Write-Host "An error occurred:"
-    Write-Host $_
-
-}
-try {
+    Import-Module Az.Dns
+    Import-Module Az.Storage
     Import-Module Posh-ACME
 } catch {
-    Write-Host "An error occurred:"
-    Write-Host $_
+    Write-Error $_
 }
 
 try {
     Import-Module $PSScriptRoot/Module/CertAutomation.psm1 -Force
 } catch {
-    Write-Host "An error occurred:"
-    Write-Host $_
+    Write-Error $_
 }
