@@ -14,7 +14,7 @@ if ($Timer.IsPastDue) {
 $START_URL = $env:TIMER_TRIGGER_START_URL
 
 Write-Host "Calling Http Endpoint To Start Durable Function..."
-$Response = Invoke-WebRequest -Method GET -Body "" -Uri $START_URL 
+$Response = Invoke-WebRequest -Method GET -Body "" -Uri $START_URL -ContentType "text/json"
 
 $Uris = $Response.Content | ConvertFrom-Json
 
