@@ -1,18 +1,19 @@
 param($Context)
 
-# Write-Host (Get-Member -InputObject $Context.Input.IsProd )
-$IsProdString = $Context.Input.IsProd.ToString()
-$InputDomainName = $Context.Input.Domain.ToString().Trim()
+# The standalone Durable SDK preserves $null input values (e.g. Domain when the
+# route has no domain segment), so use null-safe [string] casts instead of .ToString()
+$IsProdString = [string]$Context.Input.IsProd
+$InputDomainName = ([string]$Context.Input.Domain).Trim()
 if ($InputDomainName) {
     Write-Host "Context.Input.Domain : $InputDomainName"
 }
 Write-Host "Context.Input.IsProd : $IsProdString"
 $IsProd = $IsProdString -eq "True"
 Write-Host "IsProd : $IsProd"
-$SaveInKeyVault = $Context.Input.SaveInKeyVault.ToString()
+$SaveInKeyVault = [string]$Context.Input.SaveInKeyVault
 
-$Contact = $Context.Input.Contact.ToString()
-$VaultName = $Context.Input.VaultName.ToString()
+$Contact = [string]$Context.Input.Contact
+$VaultName = [string]$Context.Input.VaultName
 
 Write-Host "Contact: $Contact"
 Write-Host "VaultName: $VaultName"
