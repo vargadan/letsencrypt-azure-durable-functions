@@ -41,13 +41,18 @@ $ParallelTasks = foreach ($Domain in $Domains) {
 
 if ($ParallelTasks)
 {
-    $ExecutionOutputs = Wait-ActivityFunction -Task $ParallelTasks
-    Write-Host "Execution Outputs :"
-    Write-Host $ExecutionOutputs
-
+    # Unlike the legacy Wait-ActivityFunction, Wait-DurableTask propagates activity
+    # failures; catch so one failed domain doesn't fail the whole orchestration.
+    try {
+        $ExecutionOutputs = Wait-DurableTask -Task $ParallelTasks
+        Write-Host "Execution Outputs :"
+        Write-Host $ExecutionOutputs
+    } catch {
+        Write-Error "One or more Create-NewCertificate activities failed: $_" -ErrorAction Continue
+    }
 }
 
 Write-Host "DomainsJobs : "
-Write-Host $DomainsJobs
+Write-Host $DomainJobs
 
-$DomainsJobs
+$DomainJobs

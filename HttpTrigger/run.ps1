@@ -17,10 +17,10 @@ $OrchestratorInput = @{
   SaveInKeyVault = $SaveInKeyVault.ToString()
 }
 
-$InstanceId = Start-NewOrchestration -Input $OrchestratorInput -FunctionName 'CertProcressOrchestrator' 
+$InstanceId = Start-DurableOrchestration -Input $OrchestratorInput -FunctionName 'CertProcressOrchestrator'
 Write-Host "Started orchestration with ID = '$InstanceId'"
 
-$Response = New-OrchestrationCheckStatusResponse -Request $Request -InstanceId $InstanceId
+$Response = New-DurableOrchestrationCheckStatusResponse -Request $Request -InstanceId $InstanceId
 
 Write-Host $Response
 

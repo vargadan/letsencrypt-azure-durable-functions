@@ -1,12 +1,13 @@
 # This file enables modules to be automatically managed by the Functions service.
 # See https://aka.ms/functionsmanageddependency for additional information.
 #
+# NOTE: Managed dependencies only support exact versions ('5.5.2') or major
+# wildcards ('5.*') - 'major.minor.*' is NOT supported and fails dependency install.
 @{
-    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. 
-    # To use the Az module in your function app, please uncomment the line below.
-    'Az.Accounts' = '4.1.0'
-    'Az.KeyVault' = '6.3.1'
-    'Az.Dns' = '1.3.1'
-    'Az.Storage' = '8.3.0'
-    'Posh-ACME' = '4.28.0'
+    'Az.Accounts' = '5.5.2'
+    'Az.KeyVault' = '6.6.0'
+    'Az.Dns' = '2.2.0'
+    'Az.Storage' = '9.7.2'
+    'Posh-ACME' = '4.34.0'
+    'AzureFunctions.PowerShell.Durable.SDK' = '2.3.0'
 }

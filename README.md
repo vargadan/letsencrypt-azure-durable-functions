@@ -16,6 +16,8 @@ The orchestrated process is the following:
 
 ## Configuration:
 ### Necessary Env Vars
+- _ExternalDurablePowerShellSDK_: must be set to `true`; the app uses the standalone Durable Functions PowerShell SDK (AzureFunctions.PowerShell.Durable.SDK) instead of the deprecated built-in one
+- _FUNCTIONS_WORKER_RUNTIME_VERSION_: `7.4` (the function app's PowerShell version must also be set to 7.4 in the Azure portal / site config `powerShellVersion`)
 - _VAULT_NAME_: the name of the vault where certificates are saved
 - _CONTACT_EMAIL_: email of cert contact to where letsencrypt sends notifications (i.e. expiry)
 - _TIMER_TRIGGER_START_URL_: The URL that the timer trigger should invoke

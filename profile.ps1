@@ -22,6 +22,10 @@ if ($env:MSI_SECRET) {
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
 
+# Standalone Durable Functions SDK (requires the ExternalDurablePowerShellSDK app setting).
+# Must fail hard: without it the durable cmdlets are missing and orchestrations break.
+Import-Module AzureFunctions.PowerShell.Durable.SDK -ErrorAction Stop
+
 try {
     Import-Module Az.Accounts
     Import-Module Az.KeyVault

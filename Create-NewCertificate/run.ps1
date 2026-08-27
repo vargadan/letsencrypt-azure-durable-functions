@@ -45,7 +45,8 @@ if ($SavedCertData) {
     Write-Host "Pfx Cert Password Length   : $PasswordLength"
     $AzSubscriptionId = $(Get-AzContext).Subscription.Id
     Write-Host "SubscriptionId   : $AzSubscriptionId"
-    $AzToken = $(Get-AzAccessToken).Token
+    # Az.Accounts 5.x returns the token as a SecureString; Posh-ACME needs plain text
+    $AzToken = (Get-AzAccessToken -AsSecureString).Token | ConvertFrom-SecureString -AsPlainText
     $azParams = @{
         AZSubscriptionId=$AzSubscriptionId
         AZAccessToken=$AzToken
@@ -56,7 +57,7 @@ if ($SavedCertData) {
         $DirectoryUrl = 'LE_STAGE'
     }
     Write-Host "DirectoryUrl     : $DirectoryUrl"
-    $LEResult = New-PACertificate $DomainNames -AlwaysNewKey -Contact $Contact -DnsPlugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
+    $LEResult = New-PACertificate $DomainNames -AlwaysNewKey -Contact $Contact -Plugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
     Write-Host "Certificate generated : $LEResult"
     Get-Member -InputObject $LEResult
     $CertData = @{
