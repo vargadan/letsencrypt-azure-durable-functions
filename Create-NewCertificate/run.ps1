@@ -59,19 +59,20 @@ if ($SavedCertData) {
     Write-Host "DirectoryUrl     : $DirectoryUrl"
     $LEResult = New-PACertificate $DomainNames -AlwaysNewKey -Contact $Contact -Plugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
     Write-Host "Certificate generated : $LEResult"
-    Get-Member -InputObject $LEResult
     $CertData = @{
         CertPath = $LEResult.PfxFullChain
         Password = $Password
     }
-    $CertPath = $CertData.CertPath 
+    $CertPath = $CertData.CertPath
     Write-Host "Saving Cert and Key files for $CertName in temp storage from $CertPath"
-    Set-AzStorageBlobContent -File $LEResult.PfxFullChain -Container $BlobContainerName -Blob "$CertName-fullchain.pfx" -Metadata @{ "Password" = $Password; "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.PfxFile -Container $BlobContainerName -Blob "$CertName.pfx" -Metadata @{ "Password" = $Password; "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.FullChainFile -Container $BlobContainerName -Blob "$CertName-fullchain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.ChainFile -Container $BlobContainerName -Blob "$CertName-chain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.CertFile -Container $BlobContainerName -Blob "$CertName.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
-    Set-AzStorageBlobContent -File $LEResult.KeyFile -Container $BlobContainerName -Blob "$CertName.key" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force
+    # Out-Null everywhere: leaked pipeline objects become the activity's return value,
+    # and blob results self-reference via .Context, exceeding the SDK serializer's MaxDepth
+    Set-AzStorageBlobContent -File $LEResult.PfxFullChain -Container $BlobContainerName -Blob "$CertName-fullchain.pfx" -Metadata @{ "Password" = $Password; "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
+    Set-AzStorageBlobContent -File $LEResult.PfxFile -Container $BlobContainerName -Blob "$CertName.pfx" -Metadata @{ "Password" = $Password; "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
+    Set-AzStorageBlobContent -File $LEResult.FullChainFile -Container $BlobContainerName -Blob "$CertName-fullchain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
+    Set-AzStorageBlobContent -File $LEResult.ChainFile -Container $BlobContainerName -Blob "$CertName-chain.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
+    Set-AzStorageBlobContent -File $LEResult.CertFile -Container $BlobContainerName -Blob "$CertName.cer" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
+    Set-AzStorageBlobContent -File $LEResult.KeyFile -Container $BlobContainerName -Blob "$CertName.key" -Metadata @{ "DomainName" =  $DomainName } -Context $StorageContext -Force | Out-Null
 }
 
 if (!$CertData) {
@@ -88,7 +89,7 @@ if (!$CertData) {
     }
     $Certpw = $Password | ConvertTo-SecureString -AsPlainText -Force
     Write-Host "Uploading certificate $CertName to key-vault $VaultName from $CertPath"
-    Import-AzKeyVaultCertificate -VaultName $VaultName -Name $CertName -FilePath $CertPath -Password $Certpw -Tag $CertTags
+    Import-AzKeyVaultCertificate -VaultName $VaultName -Name $CertName -FilePath $CertPath -Password $Certpw -Tag $CertTags | Out-Null
     Write-Host "Certificate uploaded : $CertName"
     Remove-Item -Force $CertPath
     Write-Host "Certificate file deleted : $CertPath"

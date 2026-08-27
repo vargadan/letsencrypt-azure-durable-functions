@@ -52,7 +52,7 @@ function Get-CertFromStorage {
   $ReturnVal = $null
   if ($CertBlob) {
     $CertPath = "$TemplFolder/$CertName"
-    $CertBlob | Get-AzStorageBlobContent -Destination $CertPath
+    $CertBlob | Get-AzStorageBlobContent -Destination $CertPath | Out-Null
     Write-Host "Blob downloaded to $CertPath"
     $ReturnVal = @{
       "CertPath" = $CertPath
