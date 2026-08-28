@@ -8,6 +8,7 @@ $DomainName = $Parameters.DomainName
 Write-Host "Parameters : $DomainName"
 $IsProd = $Parameters.IsProd -eq "True"
 $SaveInKeyVault = $Parameters.SaveInKeyVault -eq "True"
+$Force = $Parameters.Force -eq "True"
 $Contact = $Parameters.Contact
 $CertName = Get-CertName -DomainName $DomainName -IsProd $IsProd
 $VaultName = $Parameters.VaultName
@@ -18,16 +19,28 @@ $StorageContext = New-AzStorageContext -ConnectionString $env:WEBSITE_CONTENTAZU
 $BlobContainerName =  "temp-storage"
 
 $SavedCertData = $null
-try {
-    $SavedCertData = Get-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName "$CertName-fullchain.pfx" -ErrorAction "Ignore"
-} catch {
-    Write-Host "Error Downloading Certificate :  $_"
+if ($Force) {
+    # skipping the cache falls through to the issuance branch, which also
+    # overwrites the stale blobs (Set-AzStorageBlobContent -Force)
+    Write-Host "Force renewal requested : skipping temp-storage cache"
+} else {
+    try {
+        $SavedCertData = Get-CertFromStorage -StorageContext $StorageContext -ContainerName $BlobContainerName -CertName "$CertName-fullchain.pfx" -ErrorAction "Ignore"
+    } catch {
+        Write-Host "Error Downloading Certificate :  $_"
+    }
 }
 
 $CertData = $null
 
 if ($SavedCertData) {
     Write-Host "Using certificate restored from temp storage"
+    # cached blobs from before the repack fix may still carry a misordered chain
+    try {
+        ConvertTo-LeafFirstPfx -PfxPath $SavedCertData.CertPath -Password $SavedCertData.Password | Out-Null
+    } catch {
+        Write-Warning "Leaf-first PFX repack failed; continuing with the original file: $_"
+    }
     $CertData = @{
         CertPath = $SavedCertData.CertPath
         Password = $SavedCertData.Password
@@ -59,6 +72,15 @@ if ($SavedCertData) {
     Write-Host "DirectoryUrl     : $DirectoryUrl"
     $LEResult = New-PACertificate $DomainNames -AlwaysNewKey -Contact $Contact -Plugin Azure -PluginArgs $azParams -AcceptTOS -DirectoryUrl $DirectoryUrl -Force -PfxPass $Password -verbose
     Write-Host "Certificate generated : $LEResult"
+    # Posh-ACME's PFX may have the chain certs misordered (rmbolger/Posh-ACME#683);
+    # repack before caching/importing, as Key Vault and AppGW serve the chain verbatim
+    if ($LEResult.PfxFullChain) {
+        try {
+            ConvertTo-LeafFirstPfx -PfxPath $LEResult.PfxFullChain -Password $Password | Out-Null
+        } catch {
+            Write-Warning "Leaf-first PFX repack failed; continuing with the original file: $_"
+        }
+    }
     $CertData = @{
         CertPath = $LEResult.PfxFullChain
         Password = $Password

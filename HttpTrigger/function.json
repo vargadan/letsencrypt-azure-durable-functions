@@ -5,7 +5,7 @@
       "name": "Request",
       "type": "httpTrigger",
       "direction": "in",
-      "route": "start/{stage:alpha?}",
+      "route": "start/{stage:alpha?}/{domain?}",
       "methods": [
         "post",
         "get"

@@ -11,12 +11,14 @@ Write-Host "Context.Input.IsProd : $IsProdString"
 $IsProd = $IsProdString -eq "True"
 Write-Host "IsProd : $IsProd"
 $SaveInKeyVault = [string]$Context.Input.SaveInKeyVault
+$ForceString = [string]$Context.Input.Force
 
 $Contact = [string]$Context.Input.Contact
 $VaultName = [string]$Context.Input.VaultName
 
 Write-Host "Contact: $Contact"
 Write-Host "VaultName: $VaultName"
+Write-Host "Force: $ForceString"
 
 $DomainJobs = @{}
 $DomainJobs.Add("IsProd", $IsProd)
@@ -39,7 +41,7 @@ $TaskDomainNames = @()
 foreach ($Domain in $Domains) {
     $DomainName = $Domain.Name
     $Task = Invoke-DurableActivity -FunctionName 'Create-NewCertificate' -NoWait `
-        -Input @{ DomainName = $DomainName; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact; SaveInKeyVault = $SaveInKeyVault }
+        -Input @{ DomainName = $DomainName; IsProd = $IsProdString; VaultName = $VaultName; Contact = $Contact; SaveInKeyVault = $SaveInKeyVault; Force = $ForceString }
     Write-Host "Invoke-DurableActivity Create-NewCertificate for domain : $DomainName"
     $ParallelTasks += $Task
     $TaskDomainNames += $DomainName

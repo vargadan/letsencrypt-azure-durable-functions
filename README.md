@@ -7,11 +7,12 @@ The orchestrated process is the following:
    1. Checks if a cert (pfx) file has been saved in the temporary blob storage; this is needed for idempotance as if you retry too often you may reach the rate limit of the LetsEncrypt service
    2. If there is no saved cert in the temp storage then it starts the ACME request process and saves the request in the temp storage
    3. If there is a saved cert in the temp storage then it reads that and saved to the local temp filesystem.
-   4. Imports the cetificate into the Azure Key Vault
-   5. Deletes certifiace files from local temp file system as well as from the temporary blob storage
+   4. Repacks the pfx so the certificate chain is in leaf-first order. Posh-ACME's bundled BouncyCastle writes the pfx cert bags in hashtable order ([Posh-ACME#683](https://github.com/rmbolger/Posh-ACME/issues/683)), and Key Vault / Application Gateway serve the chain verbatim, which strict monitors flag as "intermediate certificate chain is incorrect". The repack is best-effort: if it fails, the original pfx is used unchanged.
+   5. Imports the cetificate into the Azure Key Vault
+   6. Deletes certifiace files from local temp file system as well as from the temporary blob storage
 
 ## Triggers:
-- HttpTrigger: this starts the orchestration function at route start/{stage:alpha?}; if the stage param is "prod" the the Create-NewCertificate will use the productive LetsEncrypt instance and create production ready certs; otherwise it will only use the staging instance and will create certs of its staging CA which is for testing.
+- HttpTrigger: this starts the orchestration function at route start/{stage:alpha?}/{domain?}; if the stage param is "prod" the the Create-NewCertificate will use the productive LetsEncrypt instance and create production ready certs; otherwise it will only use the staging instance and will create certs of its staging CA which is for testing. The optional domain segment (e.g. start/prod/demo.gocompliant.ch) limits the run to that single domain and bypasses the expiry check - useful for forced re-issuance or for re-importing/repacking a cached cert. The optional query param force=true skips the temp-storage cache, so a genuinely new certificate is requested from LetsEncrypt (mind the rate limits: without it, a cached cert is re-imported instead). Combined, start/prod/demo.gocompliant.ch?force=true guarantees a fresh cert for that one domain.
 - TimerTrigger: this actually calls the http trigger at the configured interval
 
 ## Configuration:
